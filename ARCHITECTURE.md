@@ -419,7 +419,7 @@ interface Receipt { id: string; title: string; total: number; unit: Unit; lines:
 - Bots: `cheapFast`, `premium`, `balanced`, `recklessExpansion`, `doNothing`. Each bot is a pure
   function `(state) => Action[]` run once per in-game week, using only information a player can
   see.
-- For each scenario, N seeds (default 1,000 games per scenario, that is 200 per bot) run for five
+- For each scenario, 200 seeds (1,000 games per scenario across the five bots) run for five
   in-game years. Each seed is played by every bot so strategies are compared on the same city
   (paired comparison). The winner on a seed is the bot with the highest family net worth after
   five years.
@@ -603,11 +603,11 @@ Event definition (typed data, one file per group):
   disruptions.
 - Disruptions are dated or windowed events with lasting economic modifiers (the Great Depression,
   postwar boom, oil shocks, the arrival of the internet, the 1998 Asian financial crisis for
-  Southeast Asian scenarios, the 2008 crash, delivery apps, a pandemic lockdown). They are written
-  around their effect on a small business, respectfully and without spectacle.
-- Currency changes per region are data (for example the Netherlands Indies guilder to the rupiah,
-  the 1965 rupiah redenomination). Balances convert at the official rate with an explanation
-  prompt.
+  Southeast Asian scenarios as an economic shock only, the 2008 crash, delivery apps, a pandemic
+  lockdown). They are written around their effect on a small business, respectfully and without
+  spectacle. Wars, occupations and political violence are not depicted (Section 18).
+- Money is always in US dollars (Section 18). Each region has a cost level relative to the United
+  States by year, applied on top of the US price index.
 - An era transition screen (Libre Caslon Text) explains in a few sentences what changed and how it
   affects the family business.
 
@@ -904,30 +904,22 @@ VITE_DAILY_LEASE_EPOCH=2027-01-01
 
 ---
 
-## 18. Open questions (decisions I need from you)
+## 18. Decisions from review
 
-1. **Network for real place data.** This build container cannot reach Overpass, OpenFreeMap tiles
-   or Nominatim (npm works). To bundle real snapshots for the presets I either need those hosts
-   allowed in the environment's network settings (`overpass-api.de`, `tiles.openfreemap.org`,
-   `nominatim.openstreetmap.org`), or you run `npm run snapshots` locally and commit the output.
-   Until then I will develop against the procedural generator and the offline basemap.
-2. **Currency symbols.** The ASCII rule conflicts with symbols like the pound, euro and yen signs.
-   Proposal: use the ASCII symbol when one exists (`$`, `Rp`, `f` for the guilder) and the ISO
-   code otherwise (`EUR 1,200`, `GBP 340`, `JPY 5,000`). Numbers use comma thousands separators
-   as in your examples (`Rp 48,200,000`, `+Rp 1.2 jt`).
-3. **Feud Street location and year.** The brief does not fix it. Proposal: Court Street,
-   Carroll Gardens, Brooklyn, 1958, two Italian-American family bakeries. An alternative is
-   Pasar Baru in Jakarta, 1955, to reuse Indonesian content.
-4. **Sensitive history in The Long Game.** Batavia 1920 to Jakarta 2026 passes through the
-   Japanese occupation, the revolution, 1965 to 1966, and May 1998, when violence targeted
-   Chinese-Indonesian families (the rival family is the Tan family). Proposal: show these only as
-   their effect on a small business (closures, shortages, currency changes, customers staying
-   home), never depict violence, never make them a reward or a joke, and never let rival AI exploit
-   them. Tell me if you want any of them left out entirely.
-5. **Balance harness count.** I read "1,000 games per scenario" as 1,000 seeds per scenario,
-   each played by all five bots (5,000 runs per scenario, about 10 minutes on 4 cores). Say if you
-   meant 1,000 per bot.
-6. **Music.** Generative music on the Web Audio context (original, small) unless you plan to
-   supply composed tracks.
-7. **Production geocoder and tiles.** For public launch, which provider do you want (Photon on
-   your own server, MapTiler with a key, or another)? This only affects `.env`.
+1. **Currency.** All money is shown in US dollars in every scenario and era (`$1,234`, `-$340`,
+   `+$1.2k`, `$4.8M`). Price and wage levels still differ by region and year: each region has a
+   cost level relative to the United States, and all values move with a US price index by year.
+   This removes non-ASCII currency symbols and currency conversion events.
+2. **Feud Street.** Court Street, Carroll Gardens, Brooklyn, 1958: two family bakeries, the
+   Russo and Moretti families, with a grudge over a shared oven lease that began in 1946.
+3. **Sensitive history.** The Long Game contains no events about the Japanese occupation, the
+   revolution, 1965 to 1966 or the May 1998 unrest. Those years pass with ordinary economic
+   conditions. The 1997 to 1998 Asian financial crisis stays only as an economic shock (import
+   costs rise, customers spend less) with no reference to political events.
+4. **Balance harness.** The cheapest design that still compares strategies fairly: 200 seeds per
+   scenario, each played by all five bots on the same city (1,000 games per scenario).
+5. **Music.** Original generative music on the Web Audio context.
+6. **Network.** Overpass, tile and geocoder hosts are blocked in the build container. Development
+   uses the procedural generator and the offline basemap. Real snapshots are built later when the
+   hosts are allowed or by running `npm run snapshots` locally.
+7. **Launch providers.** Undecided; only `.env` is affected.

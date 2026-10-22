@@ -1,0 +1,9 @@
+node_modules
+dist
+coverage
+balance-report.json
+*.log
+.env
+.env.local
+test-results
+playwright-report
